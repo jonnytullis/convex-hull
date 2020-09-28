@@ -108,10 +108,10 @@ class ConvexHullSolver(QObject):
         if len(right) == 0:
             return left or []
 
-        # upper_tangent = self.get_upper_tangent_indexes(left, right)
-        lower_tangent = self.get_lower_tangent_indexes(left, right)
+        upper_tangent = self.get_tangent_indexes(left, right, True)
+        lower_tangent = self.get_tangent_indexes(left, right, False)
 
-    def get_upper_tangent_indexes(self, left, right):
+    def get_tangent_indexes(self, left, right, upper=True):
         # Both left and right lists are sorted in clockwise order
         left_index, right_index = self.get_inner_indexes(left, right)
         done = False
@@ -121,9 +121,10 @@ class ConvexHullSolver(QObject):
             current_slope = self.get_slope(left[left_index], right[right_index])
             next_slope = None
             while next_slope != current_slope:
-                next_left_index = (left_index - 1) % len(left)  # Next counter-clockwise index of left
+                # Next counter-clockwise index of left
+                next_left_index = ((left_index - 1) if upper else left_index + 1) % len(left)
                 next_slope = self.get_slope(left[next_left_index], right[right_index])
-                if next_slope < current_slope:
+                if (next_slope < current_slope) if upper else (next_slope > current_slope):
                     # We want to keep the next left index
                     left_index = next_left_index
                     current_slope = next_slope
@@ -136,48 +137,10 @@ class ConvexHullSolver(QObject):
             current_slope = self.get_slope(left[left_index], right[right_index])
             next_slope = None
             while next_slope != current_slope:
-                next_right_index = (right_index + 1) % len(right)  # Next clockwise index of right
+                # Next clockwise index of right
+                next_right_index = ((right_index + 1) if upper else (right_index - 1)) % len(right)
                 next_slope = self.get_slope(left[left_index], right[next_right_index])
-                if next_slope > current_slope:
-                    # We want to keep the next right index
-                    right_index = next_right_index
-                    current_slope = next_slope
-                    next_slope = None
-                    done = False
-                    self.blinkTangent([QLineF(left[left_index], right[right_index])], RED)
-                else:
-                    next_slope = current_slope
-        self.showTangent([QLineF(left[left_index], right[right_index])], GREEN)
-        return left_index, right_index
-
-    def get_lower_tangent_indexes(self, left, right, upper=True):
-        # Both left and right lists are sorted in clockwise order
-        left_index, right_index = self.get_inner_indexes(left, right)
-        done = False
-        while not done:
-            done = True
-            # Step up the left half
-            current_slope = self.get_slope(left[left_index], right[right_index])
-            next_slope = None
-            while next_slope != current_slope:
-                next_left_index = (left_index - 1) % len(left)  # Next counter-clockwise index of left
-                next_slope = self.get_slope(left[next_left_index], right[right_index])
-                if next_slope < current_slope:
-                    # We want to keep the next left index
-                    left_index = next_left_index
-                    current_slope = next_slope
-                    next_slope = None
-                    done = False
-                    self.blinkTangent([QLineF(left[left_index], right[right_index])], RED)
-                else:
-                    next_slope = current_slope
-            # Step up the right half
-            current_slope = self.get_slope(left[left_index], right[right_index])
-            next_slope = None
-            while next_slope != current_slope:
-                next_right_index = (right_index + 1) % len(right)  # Next clockwise index of right
-                next_slope = self.get_slope(left[left_index], right[next_right_index])
-                if next_slope > current_slope:
+                if (next_slope > current_slope) if upper else (next_slope < current_slope):
                     # We want to keep the next right index
                     right_index = next_right_index
                     current_slope = next_slope
