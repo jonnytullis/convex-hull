@@ -19,9 +19,6 @@ BLUE = (0, 0, 255)
 PAUSE = 0.25
 
 
-#
-# This is the class you have to complete.
-#
 def get_inner_indexes(left, right):
     largest_list_size = 0
     if len(left) > len(right):
@@ -51,8 +48,6 @@ def get_slope(point1, point2):
 
 
 class ConvexHullSolver(QObject):
-
-    # Class constructor
     def __init__(self):
         super().__init__()
         self.pause = False
