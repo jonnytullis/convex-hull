@@ -82,7 +82,7 @@ class ConvexHullSolver(QObject):
 
     # This is the method that gets called by the GUI and actually executes
     # the finding of the hull
-    # Entire algorithm should be O(n log n) time complexity
+    # Entire algorithm is O(n log n) time complexity
     def compute_hull(self, points, pause, view):
         self.pause = pause
         self.view = view

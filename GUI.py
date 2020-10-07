@@ -1,11 +1,11 @@
-#!/usr/bin/env python3
+####################################################
+# This file was provided by my C S 312 professor
+# My work is found in convex_hull.py
+####################################################
 
-
-import math
 import random
 import signal
 import sys
-import time
 
 
 from which_pyqt import PYQT_VER
@@ -44,7 +44,7 @@ class PointLineView( QWidget ):
 	def displayStatusText(self, text):
 		self.status_bar.showMessage(text)
 		self.update()
-		app.processEvents					#Why is this necessary????
+		app.processEvents()					#Why is this necessary????
 
 	def clearPoints(self):
 		self.pointList = {}
